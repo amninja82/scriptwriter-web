@@ -75,6 +75,16 @@ def token_config():
     except Exception as e:
         return f"Error loading token-config: {str(e)}", 500
 
+@app.route('/diagnostic')
+def diagnostic():
+    """诊断工具"""
+    try:
+        html_file = os.path.join(os.path.dirname(__file__), '..', 'diagnostic.html')
+        with open(html_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        return f"Error loading diagnostic: {str(e)}", 500
+
 @app.route('/api/token', methods=['GET', 'POST'])
 def api_token():
     """Token API"""
