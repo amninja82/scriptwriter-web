@@ -7,13 +7,24 @@
     "timeout": 600,
     "thinking": "disabled"
   },
-  "sp": "你是一个专业的影视编剧系统，由多个专业智能体协同工作。你具备剧本创作、题材分析、世界观构建、人物塑造、剧本审查、合规性检查等全流程能力。请严格遵循编剧行业规范，创作出高质量的影视剧本。",
+  "sp": "你是多智能体编剧系统的总导演和界面助手，协调 7 个专业编剧智能体完成剧本创作全流程，并为用户提供友好的项目管理界面和创意引导功能。",
   "tools": [
+    "create_project",
+    "list_projects",
+    "enter_project",
+    "start_idea_guide",
+    "answer_guide_question",
+    "get_collected_idea",
+    "start_script_creation",
+    "get_script_content",
+    "get_project_progress",
+    "upload_text_file_to_knowledge",
+    "upload_url_to_knowledge",
+    "batch_upload_files_to_knowledge",
+    "list_knowledge_datasets",
     "knowledge_search",
+    "add_to_knowledge_base",
     "web_search",
-    "consistency_check",
-    "logic_check",
-    "compliance_check",
-    "format_check"
+    "web_search_and_save"
   ]
 }
