@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多智能体编剧系统 - 使用代理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 85vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .token-section {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .token-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .token-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .token-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .token-button:hover {
+            background: #5568d3;
+        }
+
+        .token-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            justify-content: flex-start;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            margin: 0 10px;
+            flex-shrink: 0;
+        }
+
+        .message.user .avatar {
+            background: #667eea;
+            order: 2;
+        }
+
+        .message.assistant .avatar {
+            background: #764ba2;
+            order: 1;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+            order: 1;
+        }
+
+        .message.assistant .message-content {
+            background: white;
+            color: #333;
+            order: 2;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: none;
+            height: 50px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .send-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background: #5568d3;
+        }
+
+        .send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .status {
+            padding: 10px 20px;
+            font-size: 14px;
+            background: #fff3cd;
+            color: #856404;
+            display: none;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .quick-actions {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            background: white;
+            border: 1px solid #667eea;
+            color: #667eea;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .quick-action:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #999;
+            margin-top: 50px;
+        }
+
+        .welcome-message h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-message p {
+            font-size: 14px;
+        }
+
+        .proxy-status {
+            padding: 8px 20px;
+            font-size: 12px;
+            background: #e7f3ff;
+            color: #0066cc;
+            border-bottom: 1px solid #b3d9ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎭 多智能体编剧系统</h1>
+            <p>7个专业编剧智能体协作，为您打造精品剧本</p>
+        </div>
+
+        <div class="proxy-status">
+            🔌 使用本地代理服务器 (http://localhost:5000)
+        </div>
+
+        <div class="token-section">
+            <input
+                type="password"
+                id="tokenInput"
+                class="token-input"
+                placeholder="请输入您的 API Token"
+            />
+            <button id="connectButton" class="token-button" onclick="connect()">
+                连接
+            </button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div class="quick-actions hidden" id="quickActions">
+            <button class="quick-action" onclick="quickSend('你好，请介绍一下你自己')">👋 自我介绍</button>
+            <button class="quick-action" onclick="quickSend('创建一个电视剧项目')">🎬 创建项目</button>
+            <button class="quick-action" onclick="quickSend('查看所有项目')">📋 查看项目</button>
+            <button class="quick-action" onclick="quickSend('搜索悬疑剧的经典剧情结构')">🔍 搜索知识</button>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+            <div class="welcome-message" id="welcomeMessage">
+                <h2>👋 欢迎使用多智能体编剧系统</h2>
+                <p>请输入 API Token 连接智能体</p>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-container">
+                <textarea
+                    id="messageInput"
+                    class="message-input"
+                    placeholder="输入您的消息..."
+                    onkeypress="handleKeyPress(event)"
+                    disabled
+                ></textarea>
+                <button id="sendButton" class="send-button" onclick="sendMessage()" disabled>
+                    发送
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 配置 - 使用本地代理服务器
+        const PROXY_URL = 'http://localhost:5000/api/chat';
+        let apiToken = '';
+        let sessionId = generateSessionId();
+        let isConnected = false;
+
+        // 生成会话ID
+        function generateSessionId() {
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // 显示状态消息
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = 'status ' + type;
+            statusEl.style.display = 'block';
+
+            if (type !== 'error') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // 连接到智能体
+        async function connect() {
+            const tokenInput = document.getElementById('tokenInput');
+            const connectButton = document.getElementById('connectButton');
+
+            apiToken = tokenInput.value.trim();
+
+            if (!apiToken) {
+                showStatus('请输入 API Token', 'error');
+                return;
+            }
+
+            connectButton.disabled = true;
+            connectButton.innerHTML = '<span class="loading"></span> 连接中...';
+
+            try {
+                // 测试代理服务器连接
+                const testResponse = await sendMessageToAPI('你好', true);
+
+                if (testResponse) {
+                    isConnected = true;
+                    showStatus('✅ 连接成功！', 'success');
+
+                    // 启用界面
+                    document.getElementById('messageInput').disabled = false;
+                    document.getElementById('sendButton').disabled = false;
+                    document.getElementById('quickActions').classList.remove('hidden');
+                    document.getElementById('welcomeMessage').classList.add('hidden');
+
+                    connectButton.innerHTML = '已连接';
+                    connectButton.style.background = '#28a745';
+
+                    // 添加欢迎消息
+                    addMessage('assistant', '连接成功！我是多智能体编剧系统的总导演和界面助手。我可以帮你创作剧本、管理项目、搜索知识库等。请告诉我你想做什么！');
+                }
+            } catch (error) {
+                showStatus('❌ 连接失败：' + error.message, 'error');
+                connectButton.disabled = false;
+                connectButton.innerHTML = '连接';
+            }
+        }
+
+        // 发送消息到代理服务器
+        async function sendMessageToAPI(text, isTest = false) {
+            try {
+                const response = await fetch(PROXY_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        token: apiToken,
+                        message: text,
+                        session_id: sessionId
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    if (response.status === 400) {
+                        throw new Error(errorData.error || '请求参数错误');
+                    } else if (response.status === 500) {
+                        throw new Error('服务器错误：' + (errorData.message || '未知错误'));
+                    } else {
+                        throw new Error(`HTTP 错误: ${response.status}`);
+                    }
+                }
+
+                // 读取流式响应
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let fullResponse = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.trim()) {
+                            try {
+                                const data = JSON.parse(line);
+                                if (data.content) {
+                                    fullResponse += data.content;
+                                    if (!isTest) {
+                                        updateLastMessage(fullResponse);
+                                    }
+                                }
+                            } catch (e) {
+                                // 忽略 JSON 解析错误
+                            }
+                        }
+                    }
+                }
+
+                return fullResponse;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        // 添加消息到聊天界面
+        function addMessage(role, content) {
+            const chatArea = document.getElementById('chatArea');
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.id = `message-${Date.now()}`;
+
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'avatar';
+            avatarDiv.textContent = role === 'user' ? '你' : 'AI';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+
+            messageDiv.appendChild(avatarDiv);
+            messageDiv.appendChild(contentDiv);
+            chatArea.appendChild(messageDiv);
+
+            // 滚动到底部
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        // 更新最后一条消息
+        function updateLastMessage(content) {
+            const chatArea = document.getElementById('chatArea');
+            const lastMessage = chatArea.lastElementChild;
+
+            if (lastMessage && lastMessage.classList.contains('assistant')) {
+                const contentDiv = lastMessage.querySelector('.message-content');
+                contentDiv.textContent = content;
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }
+        }
+
+        // 发送消息
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+
+            const text = messageInput.value.trim();
+
+            if (!text || !isConnected) {
+                return;
+            }
+
+            // 添加用户消息
+            addMessage('user', text);
+            messageInput.value = '';
+
+            // 禁用输入
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+
+            // 添加助手消息占位符
+            addMessage('assistant', '正在思考...');
+
+            try {
+                // 发送消息到API
+                await sendMessageToAPI(text);
+            } catch (error) {
+                updateLastMessage('❌ 发送失败：' + error.message);
+                showStatus('发送失败', 'error');
+            } finally {
+                // 恢复输入
+                sendButton.disabled = false;
+                messageInput.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        // 快捷发送
+        function quickSend(text) {
+            if (!isConnected) {
+                showStatus('请先连接智能体', 'error');
+                return;
+            }
+
+            document.getElementById('messageInput').value = text;
+            sendMessage();
+        }
+
+        // 处理回车键
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // 页面加载时检查是否有保存的Token
+        window.onload = function() {
+            const savedToken = localStorage.getItem('scriptwriter_token');
+            if (savedToken) {
+                document.getElementById('tokenInput').value = savedToken;
+            }
+
+            // 检查代理服务器是否运行
+            checkProxyServer();
+        };
+
+        // 检查代理服务器状态
+        async function checkProxyServer() {
+            try {
+                const response = await fetch('http://localhost:5000/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('代理服务器状态:', data);
+                }
+            } catch (error) {
+                console.warn('代理服务器未运行，请先启动代理服务器');
+                showStatus('⚠️ 请先启动代理服务器', 'error');
+            }
+        }
+
+        // 保存Token（可选）
+        document.getElementById('tokenInput').addEventListener('change', function() {
+            localStorage.setItem('scriptwriter_token', this.value);
+        });
+    </script>
+</body>
+</html>
