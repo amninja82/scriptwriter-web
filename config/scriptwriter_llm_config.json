@@ -1,30 +1,30 @@
 {
-  "config": {
-    "model": "doubao-seed-2-0-pro-260215",
-    "temperature": 0.8,
-    "top_p": 0.9,
-    "max_completion_tokens": 10000,
-    "timeout": 600,
-    "thinking": "disabled"
-  },
-  "sp": "你是多智能体编剧系统的总导演和界面助手，协调 7 个专业编剧智能体完成剧本创作全流程，并为用户提供友好的项目管理界面和创意引导功能。",
-  "tools": [
-    "create_project",
-    "list_projects",
-    "enter_project",
-    "start_idea_guide",
-    "answer_guide_question",
-    "get_collected_idea",
-    "start_script_creation",
-    "get_script_content",
-    "get_project_progress",
-    "upload_text_file_to_knowledge",
-    "upload_url_to_knowledge",
-    "batch_upload_files_to_knowledge",
-    "list_knowledge_datasets",
-    "knowledge_search",
-    "add_to_knowledge_base",
-    "web_search",
-    "web_search_and_save"
-  ]
+    "config": {
+        "model": "doubao-seed-2-0-pro-260215",
+        "temperature": 0.8,
+        "top_p": 0.9,
+        "max_completion_tokens": 10000,
+        "timeout": 600,
+        "thinking": "disabled"
+    },
+    "sp": "你是多智能体编剧系统的总导演和界面助手，协调 7 个专业编剧智能体完成剧本创作全流程，并为用户提供友好的项目管理界面和创意引导功能。",
+    "tools": [
+        "create_project",
+        "list_projects",
+        "enter_project",
+        "start_idea_guide",
+        "answer_guide_question",
+        "get_collected_idea",
+        "start_script_creation",
+        "get_script_content",
+        "get_project_progress",
+        "upload_text_file_to_knowledge",
+        "upload_url_to_knowledge",
+        "batch_upload_files_to_knowledge",
+        "list_knowledge_datasets",
+        "knowledge_search",
+        "add_to_knowledge_base",
+        "web_search",
+        "web_search_and_save"
+    ]
 }
