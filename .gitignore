@@ -1,48 +1,59 @@
-node_modules
-dist
-.DS_Store
-*.swp
-.git/*
+# Python
 __pycache__/
-*.pyc
-.venv
-*.o
-*.a
-/vendor
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
 *.egg-info/
-/.env
+.installed.cfg
+*.egg
+
+# 数据文件
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# 日志
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 环境变量
 .env
+.env.local
 
-# 视频文件
-*.mp4
-*.avi
-*.mov
-*.wmv
-*.flv
-*.mkv
-*.webm
-*.m4v
-*.mpeg
-*.mpg
-*.3gp
-*.f4v
-*.rmvb
-*.vob
+# 操作系统
+.DS_Store
+Thumbs.db
 
-# 归档文件
-*.iso
-*.dmg
-*.rar
-*.zip
-*.gz
+# Vercel
+.vercel/
 
-# 文档类也默认加入
-*.pdf
-*.docx
-*.doc
-*.xlsx
-*.xls
-*.ppt
-*.pptx
-*.xlsx
-*.csv
+# Railway
+.railway/
+
+# 测试
+.pytest_cache/
+.coverage
+htmlcov/
