@@ -1,31 +1,20 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/**/*.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/diagnostic",
-      "dest": "/api/index.py"
+      "source": "/settings",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/token-config",
-      "dest": "/api/index.py"
+      "source": "/token-config",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/settings",
-      "dest": "/api/index.py"
+      "source": "/diagnostic",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/",
-      "dest": "/api/index.py"
+      "source": "/(.*)",
+      "destination": "/api/index.py"
     }
   ]
 }
