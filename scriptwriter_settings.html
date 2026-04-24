@@ -304,15 +304,28 @@
         async function checkTokenStatus() {
             updateStatus('loading', '检查中...', '正在检查 Token 状态');
 
+            // 先从 localStorage 读取
+            let localToken = localStorage.getItem('coze_token') || '';
+
+            if (localToken) {
+                hasToken = true;
+                updateStatus('has', '✅ 已设置', '您的 Token 已配置');
+                document.getElementById('tokenInput').value = localToken;
+                return;
+            }
+
+            // 如果本地没有，检查后端
             try {
                 const response = await fetch(`${API_BASE}/api/token?device_id=${DEVICE_ID}`);
                 const data = await response.json();
 
                 hasToken = data.has_token;
 
-                if (hasToken) {
+                if (hasToken && data.token) {
                     updateStatus('has', '✅ 已设置', '您的 Token 已配置');
                     document.getElementById('tokenInput').value = data.token;
+                    // 同步到 localStorage
+                    localStorage.setItem('coze_token', data.token);
                 } else {
                     updateStatus('no', '❌ 未设置', '请配置您的 API Token');
                 }
@@ -385,6 +398,8 @@
 
                 if (data.success) {
                     hasToken = true;
+                    // 保存到 localStorage
+                    localStorage.setItem('coze_token', token);
                     updateStatus('has', '✅ 已设置', '您的 Token 已配置');
                     showToast('Token 保存成功！', 'success');
                 } else {

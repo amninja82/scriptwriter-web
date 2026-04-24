@@ -531,6 +531,7 @@
         let hasToken = false;
         let isSending = false;
         let chats = [];
+        let userToken = localStorage.getItem('coze_token') || '';
 
         // 初始化
         window.onload = function() {
@@ -540,12 +541,26 @@
 
         // 检查 Token 状态
         async function checkTokenStatus() {
+            // 从 localStorage 读取 Token
+            userToken = localStorage.getItem('coze_token') || '';
+            hasToken = !!userToken;
+
+            // 同时也检查后端
             try {
                 const response = await fetch(`${API_BASE}/api/token?device_id=${DEVICE_ID}`);
                 const data = await response.json();
 
-                hasToken = data.has_token;
-                updateTokenStatus();
+                if (data.token && !userToken) {
+                    // 如果后端有 Token 但前端没有，同步到前端
+                    userToken = data.token;
+                    localStorage.setItem('coze_token', userToken);
+                    hasToken = true;
+                }
+            } catch (error) {
+                console.error('检查 Token 失败:', error);
+            }
+
+            updateTokenStatus();
 
                 if (hasToken) {
                     document.getElementById('messageInput').disabled = false;
@@ -702,7 +717,8 @@
                     },
                     body: JSON.stringify({
                         device_id: DEVICE_ID,
-                        message: text
+                        message: text,
+                        token: userToken  // 直接传递 Token
                     })
                 });
 
