@@ -44,6 +44,14 @@ def index():
     """主页面"""
     return send_from_directory('.', 'scriptwriter_cloud.html')
 
+@app.route('/favicon.ico')
+def favicon():
+    """网站图标"""
+    from flask import Response
+    # 返回 1x1 透明 GIF
+    gif_data = b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x4c\x01\x00\x3b'
+    return Response(gif_data, mimetype='image/gif')
+
 @app.route('/settings')
 def settings():
     """设置页面"""
