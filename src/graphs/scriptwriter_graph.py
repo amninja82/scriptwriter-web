@@ -7,7 +7,7 @@ from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from langchain_core.messages import AIMessage, HumanMessage
 
-from .scriptwriter_state import ScriptWriterState
+from graphs.scriptwriter_state import ScriptWriterState
 from agents.scriptwriter_agents import (
     build_planner_agent,
     build_worldview_agent,
