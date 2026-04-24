@@ -259,7 +259,7 @@
             <input
                 type="text"
                 id="tokenInput"
-                placeholder="pat_xxxx..."
+                placeholder="输入您的 Coze API Token..."
                 oninput="validateToken()"
             />
             <div class="help">
@@ -364,8 +364,8 @@
             const token = document.getElementById('tokenInput').value.trim();
             const saveButton = document.getElementById('saveButton');
 
-            // Token 应该以 pat_ 开头，长度至少 10
-            const isValid = token.startsWith('pat_') && token.length >= 10;
+            // Token 长度至少 10 个字符即可（不强制 pat_ 前缀）
+            const isValid = token.length >= 10;
             saveButton.disabled = !isValid;
         }
 
@@ -373,8 +373,8 @@
         async function saveToken() {
             const token = document.getElementById('tokenInput').value.trim();
 
-            if (!token.startsWith('pat_') || token.length < 10) {
-                showToast('Token 格式无效', 'error');
+            if (token.length < 10) {
+                showToast('Token 长度不能少于 10 个字符', 'error');
                 return;
             }
 
