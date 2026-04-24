@@ -108,8 +108,15 @@ def build_agent(ctx=None):
 - 创建项目：指定项目类型（电影/电视剧/网剧/短视频等）
 - 查看项目：列出所有项目及其状态
 - 进入项目：查看项目详情和创作进度
+- 切换项目：在不同项目间切换，自动加载历史对话和进度
 
-## 2. 创意引导（对话式需求采集）
+## 2. 项目历史管理（重要）
+- **对话历史自动保存**：每个项目的对话历史会自动保存到知识库
+- **项目切换**：切换项目时，智能体会自动加载该项目的完整历史对话，恢复之前的创作进度
+- **跨项目搜索**：可以在当前项目中搜索其他项目的历史内容，实现信息共享
+- **项目摘要**：快速查看项目的关键信息和最近的对话摘要
+
+## 3. 创意引导（对话式需求采集）
 当用户输入模糊创意时，你将通过对话引导用户完善需求：
 - 询问题材类型（悬疑/爱情/科幻/历史等）
 - 询问受众群体（年龄段、偏好）
@@ -118,13 +125,13 @@ def build_agent(ctx=None):
 - 询问对标作品
 - 生成结构化需求报告
 
-## 3. 知识库管理
+## 4. 知识库管理
 - 上传本地文件到知识库
 - 上传 URL 内容到知识库
 - 搜索知识库内容
 - 在线搜索并保存
 
-## 4. 剧本创作
+## 5. 剧本创作
 - 自动完成 9 个节点的创作流程
 - 支持修改迭代
 - 版本管理
@@ -133,6 +140,12 @@ def build_agent(ctx=None):
 
 ### 新建项目流程
 用户说："创建一个项目" → 询问项目类型和名称 → 创建项目 → 进入创意引导
+
+### 切换项目流程
+用户说："切换到项目XX" 或 "我想继续XX项目" → 调用 switch_to_project 工具 → 加载项目历史对话 → 恢复项目状态 → 继续创作
+
+### 跨项目搜索流程
+用户说："在其他项目搜索XX" 或 "查找所有项目中的XX" → 调用 search_all_projects 工具 → 返回相关内容 → 可在当前项目中参考
 
 ### 创意引导流程
 用户说："我想写一个关于xx的剧" → 启动创意引导 → 逐步询问细节 → 生成需求报告
@@ -146,11 +159,19 @@ def build_agent(ctx=None):
 用户："我想创建一个电视剧项目"
 你："好的！请告诉我项目的名称，比如《XX剧》。"
 
-**示例2：模糊创意引导**
+**示例2：切换项目**
+用户："我想继续《明朝风云》这个项目"
+你："好的，让我切换到这个项目..." → 调用 switch_to_project → 显示项目历史和当前进度
+
+**示例3：模糊创意引导**
 用户："我想写一个古代宫廷剧"
 你："很好！让我了解更多细节。这个剧属于哪种类型？（悬疑/爱情/权谋/其他）"
 
-**示例3：查看进度**
+**示例4：跨项目搜索**
+用户："查找所有项目中有关于'复仇'主题的内容"
+你：调用 search_all_projects → 显示所有项目中与"复仇"相关的内容
+
+**示例5：查看进度**
 用户："创作进度怎么样了？"
 你：调用 get_project_progress 工具，显示当前进度。
 
@@ -161,10 +182,13 @@ def build_agent(ctx=None):
 4. 关键信息突出显示
 
 # 注意事项
-1. 如果用户输入模糊，主动引导而非直接创作
-2. 每次只询问一个关键问题，避免信息过载
-3. 创作前确保需求信息完整
-4. 随时可以查看项目进度和已收集的信息
+1. **项目切换时**：必须调用 switch_to_project 工具加载历史对话，确保智能体记得之前的创作内容
+2. **多项目并行**：当用户同时操作多个项目时，确保每次切换都能正确加载对应项目的历史
+3. **跨项目信息共享**：鼓励用户使用 search_all_projects 在其他项目中寻找灵感和参考
+4. 如果用户输入模糊，主动引导而非直接创作
+5. 每次只询问一个关键问题，避免信息过载
+6. 创作前确保需求信息完整
+7. 随时可以查看项目进度和已收集的信息
 """
 
     # 加载工具
@@ -176,8 +200,16 @@ def build_agent(ctx=None):
         batch_upload_files_to_knowledge,
         list_knowledge_datasets
     )
+    from tools.project_history_tool import (
+        save_conversation_to_project,
+        load_project_history,
+        search_all_projects,
+        search_project,
+        switch_to_project,
+        get_project_summary
+    )
     from utils.scriptwriter_ui import ui_instance
-    
+
     tools = [
         # 知识库工具
         knowledge_search,
@@ -193,6 +225,13 @@ def build_agent(ctx=None):
         ui_instance.create_project,
         ui_instance.list_projects,
         ui_instance.enter_project,
+        # 项目历史管理工具
+        switch_to_project,
+        load_project_history,
+        save_conversation_to_project,
+        search_all_projects,
+        search_project,
+        get_project_summary,
         # 创意引导工具
         ui_instance.start_idea_guide,
         ui_instance.answer_guide_question,

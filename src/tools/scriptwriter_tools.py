@@ -19,6 +19,14 @@ from tools.file_upload_tool import (
     list_knowledge_datasets,
     delete_knowledge_document
 )
+from tools.project_history_tool import (
+    save_conversation_to_project,
+    load_project_history,
+    search_all_projects,
+    search_project,
+    switch_to_project,
+    get_project_summary
+)
 
 __all__ = [
     "knowledge_search",
@@ -33,5 +41,11 @@ __all__ = [
     "upload_url_to_knowledge",
     "batch_upload_files_to_knowledge",
     "list_knowledge_datasets",
-    "delete_knowledge_document"
+    "delete_knowledge_document",
+    "save_conversation_to_project",
+    "load_project_history",
+    "search_all_projects",
+    "search_project",
+    "switch_to_project",
+    "get_project_summary"
 ]

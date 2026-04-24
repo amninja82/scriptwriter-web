@@ -69,14 +69,15 @@ class ScriptWriterUI:
             return f"❌ 创建项目失败: {str(e)}"
     
     @tool
-    def list_projects(self, status: str = "", project_type: str = "") -> str:
+    def list_projects(self, status: str = "", project_type: str = "", show_history: bool = False) -> str:
         """
         列出所有剧本项目
-        
+
         参数:
             status: 状态筛选（草稿/创作中/审查中/已完成/已归档）
             project_type: 类型筛选（电影/电视剧/网剧等）
-        
+            show_history: 是否显示项目历史摘要（True/False）
+
         返回:
             项目列表
         """
@@ -92,7 +93,7 @@ class ScriptWriterUI:
                     "已归档": ProjectStatus.ARCHIVED
                 }
                 status_filter = status_map.get(status)
-            
+
             type_filter = None
             if project_type:
                 type_map = {
@@ -101,12 +102,12 @@ class ScriptWriterUI:
                     "网剧": ProjectType.WEB_SERIES
                 }
                 type_filter = type_map.get(project_type)
-            
+
             projects = self.project_manager.list_projects(status_filter, type_filter)
-            
+
             if not projects:
                 return "📭 暂无项目，你可以创建一个新项目！"
-            
+
             result = "📚 剧本项目列表\n\n"
             for i, proj in enumerate(projects, 1):
                 result += f"""
@@ -115,33 +116,52 @@ class ScriptWriterUI:
    状态: {proj.status.value}
    描述: {proj.description or '暂无描述'}
    创建时间: {proj.created_at}
+   最后修改: {proj.updated_at}
 """
-            
+
             result += f"\n总计: {len(projects)} 个项目"
+
+            # 如果需要显示历史摘要，使用项目历史工具
+            if show_history and projects:
+                result += "\n\n" + "="*60
+                result += "\n📜 项目历史摘要\n\n"
+
+                from tools.project_history_tool import get_project_summary
+                for proj in projects[:3]:  # 最多显示前3个项目的历史
+                    try:
+                        summary = get_project_summary(proj.project_id)
+                        result += f"【{proj.name}】\n{summary}\n\n"
+                    except Exception as e:
+                        result += f"【{proj.name}】历史获取失败: {str(e)}\n\n"
+
+                if len(projects) > 3:
+                    result += f"...还有 {len(projects) - 3} 个项目未显示历史\n"
+
             return result
-            
+
         except Exception as e:
             return f"❌ 获取项目列表失败: {str(e)}"
     
     @tool
-    def enter_project(self, project_id: str) -> str:
+    def enter_project(self, project_id: str, load_history: bool = True) -> str:
         """
         进入项目详情
-        
+
         参数:
             project_id: 项目 ID
-        
+            load_history: 是否加载项目历史对话（默认 True）
+
         返回:
             项目详情和下一步操作提示
         """
         try:
             project = self.project_manager.get_project(project_id)
-            
+
             if not project:
                 return f"❌ 项目不存在: {project_id}"
-            
+
             self.current_project = project
-            
+
             result = f"""
 ✅ 已进入项目：{project.name}
 
@@ -153,32 +173,43 @@ class ScriptWriterUI:
 
 💼 项目内容：
 """
-            
+
             if project.idea_requirement:
                 result += f"- 创意需求: {project.idea_requirement[:50]}...\n"
             else:
                 result += "- 创意需求: 未填写\n"
-            
+
             if project.core_outline:
                 result += f"- 核心大纲: 已生成\n"
             else:
                 result += "- 核心大纲: 未生成\n"
-            
+
             if project.script_content:
                 result += f"- 剧本正文: 已生成（v{project.current_version}）\n"
             else:
                 result += "- 剧本正文: 未生成\n"
-            
+
             result += f"""
 🎯 可用操作：
 1. 输入创意：开始需求采集
 2. 开始创作：启动剧本创作流程
 3. 查看进度：查看创作进度
 4. 返回列表：返回项目列表
+5. 切换项目：切换到其他项目
 """
-            
+
+            # 如果需要加载历史对话
+            if load_history:
+                try:
+                    from tools.project_history_tool import load_project_history
+                    history = load_project_history(project_id, limit=10)
+                    if "未找到" not in history:
+                        result += f"\n---\n\n{history}"
+                except Exception as e:
+                    result += f"\n⚠️ 加载历史对话失败: {str(e)}"
+
             return result
-            
+
         except Exception as e:
             return f"❌ 进入项目失败: {str(e)}"
     
