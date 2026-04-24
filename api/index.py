@@ -85,6 +85,16 @@ def diagnostic():
     except Exception as e:
         return f"Error loading diagnostic: {str(e)}", 500
 
+@app.route('/test')
+def test_page():
+    """测试页面"""
+    try:
+        html_file = os.path.join(os.path.dirname(__file__), '..', 'test.html')
+        with open(html_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        return f"Error loading test page: {str(e)}", 500
+
 @app.route('/api/token', methods=['GET', 'POST'])
 def api_token():
     """Token API"""

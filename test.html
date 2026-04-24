@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        .success { color: green; font-size: 24px; }
+        .info {
+            background: #d1ecf1;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="success">✅ 测试页面加载成功！</h1>
+
+        <div class="info">
+            <h3>当前信息：</h3>
+            <p><strong>域名：</strong><span id="domain"></span></p>
+            <p><strong>时间：</strong><span id="time"></span></p>
+        </div>
+
+        <div class="info">
+            <h3>说明：</h3>
+            <p>如果你能看到这个页面，说明 Vercel 部署成功了！</p>
+        </div>
+
+        <div class="info">
+            <h3>下一步：</h3>
+            <p>1. <a href="/diagnostic">访问诊断工具</a></p>
+            <p>2. <a href="/">访问主页</a></p>
+            <p>3. <a href="/settings">访问设置页面</a></p>
+        </div>
+
+        <button onclick="testAPI()">测试 API</button>
+        <button onclick="testLocalStorage()">测试 LocalStorage</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('domain').textContent = window.location.origin;
+        document.getElementById('time').textContent = new Date().toLocaleString('zh-CN');
+
+        function testAPI() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>测试中...</p>';
+
+            fetch('/api/token?device_id=test-device')
+                .then(response => response.json())
+                .then(data => {
+                    result.innerHTML = `
+                        <div class="info">
+                            <h3>API 测试结果：</h3>
+                            <p><strong>成功：</strong>${data.success}</p>
+                            <p><strong>有 Token：</strong>${data.has_token || false}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    result.innerHTML = `<p style="color: red;">API 测试失败：${error.message}</p>`;
+                });
+        }
+
+        function testLocalStorage() {
+            localStorage.setItem('test-key', 'test-value');
+            const value = localStorage.getItem('test-key');
+            const result = document.getElementById('result');
+            result.innerHTML = `
+                <div class="info">
+                    <h3>LocalStorage 测试结果：</h3>
+                    <p><strong>写入：</strong>test-key = test-value</p>
+                    <p><strong>读取：</strong>${value}</p>
+                    <p><strong>结果：</strong>${value === 'test-value' ? '✅ 成功' : '❌ 失败'}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
