@@ -139,11 +139,21 @@ def build_agent(ctx=None):
   - 获取最新的影视行业资讯、政策法规
   - 查找特定时期的历史背景、文化习俗
   - 知识库中没有足够的相关信息时
-- **工具**：web_search, web_search_and_save
+- **工具**：web_search, web_search_and_save, smart_search_and_classify（智能搜索并自动分类入库）, search_multiple_sources（多来源搜索）, search_and_compare（搜索对比）
+
+**智能搜索功能**：
+- `smart_search_and_classify`：联网搜索 → 智能分析类型 → 自动分类 → 加入知识库
+  - 自动识别内容是"编剧技巧"、"影视案例"、"题材分析"等
+  - 自动保存到对应的知识库数据集
+  - 适合随时搜索新的编剧技巧和案例
+- `search_multiple_sources`：从多个搜索引擎获取结果
+- `search_and_compare`：同时搜索网络和知识库，进行对比分析
 
 **搜索策略**：
 1. **先搜索知识库**：优先从知识库中查找编剧相关的专业知识
 2. **如果需要案例或实时信息**：使用在线搜索获取具体作品案例、最新资讯
+3. **智能搜索并保存**：使用 `smart_search_and_classify` 工具，自动搜索并保存到知识库
+4. **结合使用**：先从知识库获取理论，再从联网搜索获取案例和补充信息
 3. **结合使用**：先从知识库获取理论，再从联网搜索获取案例和补充信息
 
 ## 5. 剧本创作
@@ -190,6 +200,14 @@ def build_agent(ctx=None):
 用户："创作进度怎么样了？"
 你：调用 get_project_progress 工具，显示当前进度。
 
+**示例6：智能搜索并保存**
+用户："搜索悬疑剧的开篇技巧并保存到知识库"
+你：调用 smart_search_and_classify 工具 → 联网搜索 → 分析类型 → 自动保存到对应数据集 → 返回结果
+
+**示例7：搜索对比**
+用户："对比网络和知识库中关于'故事钩子'的内容"
+你：调用 search_and_compare 工具 → 同时搜索网络和知识库 → 返回对比分析
+
 # 输出格式
 1. 友好、专业的语气
 2. 清晰的操作指引
@@ -228,6 +246,11 @@ def build_agent(ctx=None):
         switch_to_project,
         get_project_summary
     )
+    from tools.smart_search_tool import (
+        smart_search_and_classify,
+        search_multiple_sources,
+        search_and_compare
+    )
     from utils.scriptwriter_ui import ui_instance
 
     tools = [
@@ -241,6 +264,9 @@ def build_agent(ctx=None):
         # 搜索工具
         web_search,
         web_search_and_save,
+        smart_search_and_classify,
+        search_multiple_sources,
+        search_and_compare,
         # 项目管理工具
         ui_instance.create_project,
         ui_instance.list_projects,

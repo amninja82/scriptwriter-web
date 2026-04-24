@@ -27,6 +27,11 @@ from tools.project_history_tool import (
     switch_to_project,
     get_project_summary
 )
+from tools.smart_search_tool import (
+    smart_search_and_classify,
+    search_multiple_sources,
+    search_and_compare
+)
 
 __all__ = [
     "knowledge_search",
@@ -47,5 +52,8 @@ __all__ = [
     "search_all_projects",
     "search_project",
     "switch_to_project",
-    "get_project_summary"
+    "get_project_summary",
+    "smart_search_and_classify",
+    "search_multiple_sources",
+    "search_and_compare"
 ]
