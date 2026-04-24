@@ -5,7 +5,7 @@
 ## ✨ 系统特性
 
 - ✅ **7个专业智能体**：策划师、世界观架构师、人设师、主笔编剧、剧本医生、合规专员、制片顾问
-- ✅ **完整创作流程**：9个节点的创作流水线，从需求到完稿
+- ✅ **8节点创作流程**：从需求到终稿的完整创作流水线
 - ✅ **知识库集成**：内置专业编剧知识库，支持联网搜索并自动分类保存
 - ✅ **项目管理**：创建多个项目，独立管理对话历史
 - ✅ **版本多样**：图形界面版、命令行版、云端版
@@ -91,15 +91,18 @@ build_windows.bat
 3. **人设师 Agent** - 人物档案创建
 4. **主笔编剧 Agent** - 大纲创作、剧本正文生成
 5. **剧本医生 Agent** - 质量审查、修改建议
-6. **合规专员 Agent** - 合规性检查
-7. **制片顾问 Agent** - 商业价值评估
+6. **合规专员 Agent** - 合规性检查（可选）
+7. **制片顾问 Agent** - 商业价值评估（可选）
 
-### 2. 9节点创作流程
+### 2. 8节点创作流程
 
 ```
-需求解析 → 题材定位 → 世界观与人设 → 核心大纲 →
-大纲校验 → 分集/分场大纲 → 剧本正文生成 → 终稿校验 → 修改迭代
+需求解析 → 题材定位 → 世界观与人设 → 核心大纲 → 大纲校验
+                                                         ↓
+分集/分场大纲 → 剧本正文生成 → 终稿校验
 ```
+
+详细说明：[工作流程指南](WORKFLOW_GUIDE.md)
 
 ### 3. 知识库系统
 
@@ -221,6 +224,7 @@ build_windows.bat
 ├── EXE_FIX_GUIDE.md              # exe 修复指南
 ├── CLOUD_DEPLOYMENT_GUIDE.md     # 云端部署指南
 ├── VERSION_COMPARISON.md         # 版本对比指南
+├── WORKFLOW_GUIDE.md             # 工作流程指南
 └── README.md                     # 本文件
 ```
 
@@ -244,6 +248,7 @@ build_windows.bat
 | [EXE_FIX_GUIDE.md](EXE_FIX_GUIDE.md) | exe 版本修复指南 |
 | [CLOUD_DEPLOYMENT_GUIDE.md](CLOUD_DEPLOYMENT_GUIDE.md) | 云端部署详细指南 |
 | [VERSION_COMPARISON.md](VERSION_COMPARISON.md) | 版本对比与选择指南 |
+| [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md) | 8节点工作流程指南 |
 
 ---
 
