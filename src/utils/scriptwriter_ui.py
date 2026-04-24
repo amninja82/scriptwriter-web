@@ -201,8 +201,8 @@ class ScriptWriterUI:
             # 如果需要加载历史对话
             if load_history:
                 try:
-                    from tools.project_history_tool import load_project_history
-                    history = load_project_history(project_id, limit=10)
+                    from tools.project_history_tool import _load_project_history_impl
+                    history = _load_project_history_impl(project_id, limit=10)
                     if "未找到" not in history:
                         result += f"\n---\n\n{history}"
                 except Exception as e:

@@ -83,10 +83,9 @@ def save_conversation_to_project(project_id: str, conversation: List[Dict]) -> s
         return f"❌ 保存对话时出错: {str(e)}"
 
 
-@tool
-def load_project_history(project_id: str, limit: int = 20) -> str:
+def _load_project_history_impl(project_id: str, limit: int = 20) -> str:
     """
-    加载项目历史对话
+    加载项目历史对话（内部实现函数，供多个工具调用）
 
     Args:
         project_id: 项目ID
@@ -116,6 +115,21 @@ def load_project_history(project_id: str, limit: int = 20) -> str:
 
     except Exception as e:
         return f"❌ 加载历史对话时出错: {str(e)}"
+
+
+@tool
+def load_project_history(project_id: str, limit: int = 20) -> str:
+    """
+    加载项目历史对话
+
+    Args:
+        project_id: 项目ID
+        limit: 返回的对话数量限制
+
+    Returns:
+        项目历史对话内容
+    """
+    return _load_project_history_impl(project_id, limit)
 
 
 @tool
@@ -244,7 +258,7 @@ def switch_to_project(project_id: str) -> str:
             return f"❌ 未找到项目ID: {project_id}"
 
         # 2. 加载项目历史
-        history = load_project_history(project_id)
+        history = _load_project_history_impl(project_id)
 
         # 3. 返回切换结果
         output = f"✅ **已切换到项目**\n\n"
@@ -298,7 +312,7 @@ def get_project_summary(project_id: str) -> str:
                 output += f"- **大纲**: {project.core_outline[:200]}...\n"
 
         # 搜索最近的对话
-        history_summary = load_project_history(project_id, limit=5)
+        history_summary = _load_project_history_impl(project_id, limit=5)
         if "未找到" not in history_summary:
             output += "\n---\n\n"
             output += "📜 **最近的对话**:\n"
