@@ -1,0 +1,19 @@
+{
+  "config": {
+    "model": "doubao-seed-2-0-pro-260215",
+    "temperature": 0.8,
+    "top_p": 0.9,
+    "max_completion_tokens": 10000,
+    "timeout": 600,
+    "thinking": "disabled"
+  },
+  "sp": "你是一个专业的影视编剧系统，由多个专业智能体协同工作。你具备剧本创作、题材分析、世界观构建、人物塑造、剧本审查、合规性检查等全流程能力。请严格遵循编剧行业规范，创作出高质量的影视剧本。",
+  "tools": [
+    "knowledge_search",
+    "web_search",
+    "consistency_check",
+    "logic_check",
+    "compliance_check",
+    "format_check"
+  ]
+}
