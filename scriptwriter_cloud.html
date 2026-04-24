@@ -597,7 +597,16 @@
 
         // 打开设置页面
         function openSettings() {
-            window.location.href = '/settings';
+            console.log('Opening settings page...');
+            try {
+                // 使用当前域名 + /settings
+                const currentUrl = window.location.origin;
+                console.log('Current URL:', currentUrl);
+                window.location.href = currentUrl + '/settings';
+            } catch (error) {
+                console.error('Failed to open settings:', error);
+                alert('无法打开设置页面：' + error.message);
+            }
         }
 
         // 加载对话历史
