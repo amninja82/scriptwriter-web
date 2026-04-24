@@ -43,7 +43,6 @@ def save_chats(chats):
 def index():
     """主页面"""
     try:
-        # 读取 HTML 文件内容
         html_file = os.path.join(os.path.dirname(__file__), '..', 'scriptwriter_cloud.html')
         with open(html_file, 'r', encoding='utf-8') as f:
             return f.read()
@@ -64,7 +63,7 @@ def settings():
         with open(html_file, 'r', encoding='utf-8') as f:
             return f.read()
     except Exception as e:
-        return f"Error loading page: {str(e)}", 500
+        return f"Error loading settings page: {str(e)}", 500
 
 @app.route('/api/token', methods=['GET', 'POST'])
 def api_token():
