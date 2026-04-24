@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, Response
 import os
 import json
 
@@ -42,20 +42,29 @@ def save_chats(chats):
 @app.route('/')
 def index():
     """主页面"""
-    return send_from_directory('.', 'scriptwriter_cloud.html')
+    try:
+        # 读取 HTML 文件内容
+        html_file = os.path.join(os.path.dirname(__file__), '..', 'scriptwriter_cloud.html')
+        with open(html_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        return f"Error loading page: {str(e)}", 500
 
 @app.route('/favicon.ico')
 def favicon():
     """网站图标"""
-    from flask import Response
-    # 返回 1x1 透明 GIF
     gif_data = b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x4c\x01\x00\x3b'
     return Response(gif_data, mimetype='image/gif')
 
 @app.route('/settings')
 def settings():
     """设置页面"""
-    return send_from_directory('.', 'scriptwriter_settings.html')
+    try:
+        html_file = os.path.join(os.path.dirname(__file__), '..', 'scriptwriter_settings.html')
+        with open(html_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        return f"Error loading page: {str(e)}", 500
 
 @app.route('/api/token', methods=['GET', 'POST'])
 def api_token():
