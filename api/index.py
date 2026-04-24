@@ -65,6 +65,16 @@ def settings():
     except Exception as e:
         return f"Error loading settings page: {str(e)}", 500
 
+@app.route('/token-config')
+def token_config():
+    """Token 配置工具（临时）"""
+    try:
+        html_file = os.path.join(os.path.dirname(__file__), '..', 'token-config.html')
+        with open(html_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        return f"Error loading token-config: {str(e)}", 500
+
 @app.route('/api/token', methods=['GET', 'POST'])
 def api_token():
     """Token API"""

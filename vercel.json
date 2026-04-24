@@ -8,6 +8,10 @@
   ],
   "routes": [
     {
+      "src": "/token-config",
+      "dest": "/api/index.py"
+    },
+    {
       "src": "/settings",
       "dest": "/api/index.py"
     },

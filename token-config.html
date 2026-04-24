@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token 配置工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        label { display: block; margin: 10px 0 5px; font-weight: bold; }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #0056b3; }
+        .info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Token 配置工具</h1>
+
+        <div class="info">
+            <strong>说明：</strong>
+            <p>此工具用于临时配置 API Token。配置完成后，Token 将保存在浏览器本地存储中。</p>
+        </div>
+
+        <label for="token">Coze API Token：</label>
+        <input type="text" id="token" placeholder="粘贴您的 Token...">
+        
+        <button onclick="saveToken()">保存 Token</button>
+        
+        <div id="message"></div>
+
+        <div class="info">
+            <strong>如何获取 Token：</strong>
+            <p>1. 访问 <a href="https://coze.com/user/pat" target="_blank">https://coze.com/user/pat</a></p>
+            <p>2. 创建新的 Personal Access Token</p>
+            <p>3. 复制 Token 并粘贴到上方输入框</p>
+        </div>
+
+        <div class="info">
+            <strong>测试 Token：</strong>
+            <p>配置完成后，<a href="/">返回主页</a> 测试聊天功能。</p>
+        </div>
+    </div>
+
+    <script>
+        // 初始化：检查是否已有 Token
+        window.onload = function() {
+            const token = localStorage.getItem('coze_token') || '';
+            if (token) {
+                document.getElementById('token').value = token;
+                showMessage('已找到本地保存的 Token', 'success');
+            }
+        };
+
+        function showMessage(msg, type) {
+            const div = document.getElementById('message');
+            div.innerHTML = `<p class="${type}">${msg}</p>`;
+            setTimeout(() => div.innerHTML = '', 3000);
+        }
+
+        function saveToken() {
+            const token = document.getElementById('token').value.trim();
+            
+            if (token.length < 10) {
+                showMessage('Token 长度不能少于 10 个字符', 'error');
+                return;
+            }
+            
+            localStorage.setItem('coze_token', token);
+            showMessage('Token 保存成功！现在可以返回主页使用', 'success');
+        }
+    </script>
+</body>
+</html>
