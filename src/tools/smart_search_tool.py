@@ -84,7 +84,27 @@ def analyze_content_type(content: str) -> Dict[str, str]:
 
     try:
         response = llm.invoke(prompt)
-        result_text = response.content
+
+        # 处理 response.content，可能是字符串或列表
+        if isinstance(response.content, str):
+            result_text = response.content
+        elif isinstance(response.content, list):
+            # 如果是列表，拼接所有内容
+            result_text = ""
+            for item in response.content:
+                if isinstance(item, str):
+                    result_text += item
+                elif isinstance(item, dict):
+                    # 如果是字典，尝试获取 text 字段
+                    if "text" in item:
+                        result_text += item["text"]
+                    else:
+                        result_text += str(item)
+                else:
+                    # 其他类型，转换为字符串
+                    result_text += str(item)
+        else:
+            result_text = str(response.content)
 
         # 提取 JSON（去除可能的 markdown 代码块标记）
         if "```json" in result_text:

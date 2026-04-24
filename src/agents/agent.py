@@ -273,7 +273,18 @@ def build_agent(ctx=None):
         search_multiple_sources,
         search_and_compare
     )
-    from utils.scriptwriter_ui import ui_instance
+    # 使用独立的界面工具（解决类方法 @tool 参数冲突问题）
+    from tools.scriptwriter_ui_tools import (
+        create_project,
+        list_projects,
+        enter_project,
+        start_idea_guide,
+        answer_guide_question,
+        get_collected_idea,
+        start_script_creation,
+        get_script_content,
+        get_project_progress
+    )
 
     tools = [
         # 知识库工具
@@ -289,10 +300,10 @@ def build_agent(ctx=None):
         smart_search_and_classify,
         search_multiple_sources,
         search_and_compare,
-        # 项目管理工具
-        ui_instance.create_project,
-        ui_instance.list_projects,
-        ui_instance.enter_project,
+        # 项目管理工具（使用独立函数）
+        create_project,
+        list_projects,
+        enter_project,
         # 项目历史管理工具
         switch_to_project,
         load_project_history,
@@ -300,14 +311,14 @@ def build_agent(ctx=None):
         search_all_projects,
         search_project,
         get_project_summary,
-        # 创意引导工具
-        ui_instance.start_idea_guide,
-        ui_instance.answer_guide_question,
-        ui_instance.get_collected_idea,
-        # 剧本创作工具
-        ui_instance.start_script_creation,
-        ui_instance.get_script_content,
-        ui_instance.get_project_progress
+        # 创意引导工具（使用独立函数）
+        start_idea_guide,
+        answer_guide_question,
+        get_collected_idea,
+        # 剧本创作工具（使用独立函数）
+        start_script_creation,
+        get_script_content,
+        get_project_progress
     ]
     
     # 创建主 Agent
